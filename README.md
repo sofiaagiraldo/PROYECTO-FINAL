@@ -175,9 +175,7 @@ Costo = Tarifa Base + (Distancia km × $50 × Peso kg)
 
 ## 👥 Integrantes del Grupo
 
-- [Nombre Integrante 1]
-- [Nombre Integrante 2]
-- [Nombre Integrante 3]
+- Sofia Giraldo
 
 ---
 
