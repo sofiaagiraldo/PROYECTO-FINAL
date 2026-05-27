@@ -1,0 +1,13 @@
+zona_id,nombre_localidad,sector_ciudad,factor_tarifa,tiempo_acceso_min
+1,USAQUÉN,Norte,1.02,31
+2,CHAPINERO,Central,1.08,26
+3,PUENTE ARANDA,Suroccidente,1.13,41
+4,BOSA,Sur,1.17,44
+5,FONTIBÓN,Aero / Carga rápida,1.09,21
+6,ENGATIVÁ,Occidente densidad media,1.11,35
+7,KENNEDY,Sur alta demanda,1.15,49
+8,SUBA CENTRAL,Norte ciudadano,1.06,40
+9,SAN CRISTÓBAL OCC.,Oriente medio,1.06,33
+10,ANTONIO NARIÑO,Centrosur ciudad,1.06,45
+11,TEUSAQUILLO ANTIGUO,Central alta mix,1.06,25
+12,BOGOTÁ ANTIGUO,Centro histórico,1.14,18

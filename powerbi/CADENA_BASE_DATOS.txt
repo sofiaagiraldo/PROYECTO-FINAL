@@ -1,0 +1,4 @@
+Ruta absoluta SQLite (copiar/pegar como referencia rápida al enlazar desde Power BI):
+/Users/andresc/Downloads/PROYECTO-FINAL/data/ruta_optima.db
+
+CSV paralelos refrescados cada arranque: carpeta sibling `csv_refresh/` (ver `bootstrap`).

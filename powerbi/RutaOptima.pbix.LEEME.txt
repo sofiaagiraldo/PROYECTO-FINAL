@@ -1,0 +1,8 @@
+Este archivo existe porque `.pbix` es binario: debes crearlo en Power BI Desktop.
+
+Pasos rapidos:
+1) Ejecuta `python main.py` desde la raiz del repo (crea BD y CSV).
+2) Desktop: Obtener datos desde SQLite usando la ruta en `CADENA_BASE_DATOS.txt`,
+   o importar desde `csv_refresh/` (texto CSV).
+3) Define relaciones de estrella, 4 graficas minimas, 1 medida DAX y 1 columna calculada (ver README_PBI.txt).
+4) Guarda aqui como: `RutaOptima.pbix` (nombre exacto, para que el boton 5 del Tkinter lo abra).

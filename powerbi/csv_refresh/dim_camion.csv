@@ -1,0 +1,13 @@
+camion_id,placa,capacidad_nominal_kg,clase_unidad
+1,EOQ982,850.0,Urbano chasis liviano
+2,FGL441,3400.0,Urbano mixto
+3,JXP203,1520.0,Urbano última milla
+4,NKR715,5200.0,Urbano pesado
+5,QWE118,1100.0,Urbano compacto
+6,TRS552,2200.0,Urbano multi-stop
+7,UVZ889,1800.0,Urbano standard
+8,WXY764,2500.0,Urbano mixto express
+9,ZZA001,2100.0,Urbano rotación
+10,ZZA002,2300.0,Urbano rotación
+11,ZZA003,2400.0,Urbano rotación
+12,ZZA004,2600.0,Urbano rotación
