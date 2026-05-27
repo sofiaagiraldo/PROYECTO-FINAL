@@ -1,123 +1,192 @@
-# Proyecto final — RETO LOGÍSTICA «Ruta-Óptima»
+# 🚚 Ruta-Óptima — Sistema de Clasificación y Gestión de Envíos
 
-Ecosistema end-to-end (Python + SQLite modelo estrella + Tkinter + Power BI) según **Taller Final Corte 3 — Programación y Decisiones (UNISABANA)**.
+> **Taller Final Corte 3 — Ecosistema Tecnológico End-to-End**  
+> Asignatura: Programación y Decisiones | Universidad de La Sabana | 2026-1  
+> Reto 1: Logística — "Ruta-Óptima"
 
 ---
 
-## Guía rápida
+## 📋 Descripción del Proyecto
 
-**Instrucciones completas paso a paso (local + Power BI):**  
-👉 **[INSTRUCCIONES_LOCAL.md](INSTRUCCIONES_LOCAL.md)**
+**Ruta-Óptima** es un ecosistema tecnológico completo para una empresa de envíos en Bogotá que necesita **clasificar paquetes** antes de cargarlos a los camiones. El sistema permite:
 
-### En 4 comandos (macOS)
+- Registrar envíos ingresando **peso (kg)** y **destino**.
+- **Clasificar automáticamente** el paquete: `Documento`, `Paquetería`, `Carga`, `Carga Pesada` o `Sobredimensionado`.
+- **Calcular el costo de envío** basado en la tarifa por tipo y la distancia al destino.
+- **Generar un manifiesto de carga** ordenado por peso.
+- Visualizar indicadores de negocio en **Power BI**.
 
-```bash
-cd PROYECTO-FINAL
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-chmod +x run_gui.sh && ./run_gui.sh
+---
+
+## 🏗️ Arquitectura del Sistema
+
+```
+RutaOptima/
+│
+├── main.py                        ← Orquestador principal (punto de entrada)
+├── RutaOptima_Dashboard.pbix      ← Tablero de Power BI
+├── README.md                      ← Este archivo
+│
+├── Backend/
+│   ├── __init__.py
+│   ├── database.py                ← SQLite: creación de tablas, CRUD, semillas
+│   ├── modelos.py                 ← POO: Destino, TipoPaquete, Camion, Envio, ServicioLogistica
+│   └── ruta_optima.db             ← Base de datos (generada automáticamente)
+│
+└── Frontend/
+    ├── __init__.py
+    └── app.py                     ← Interfaz gráfica Tkinter
 ```
 
-1. Se abre la **ventana Tkinter** con dashboard (KPI + 4 gráficas) y CRUD.  
-2. Se genera **`powerbi/RutaOptima.pbix`**.  
-3. En la app, pulsa **botón 5** o abre ese archivo en **Power BI Desktop** y arma las 4 gráficas del informe (ver guía).
+### Esquema Estrella (SQLite)
 
----
-
-## Estructura del proyecto
-
-| Elemento | Descripción |
-|----------|-------------|
-| `Backend/` | POO + SQLite (`fact_envio` + `dim_fecha`, `dim_zona`, `dim_camion`) |
-| `Frontend/` | GUI Tkinter + `panel_dashboard.py` (gráficas en vivo) |
-| `main.py` | Orquestador: BD, export BI, GUI |
-| `run_gui.sh` | Arranque recomendado en Mac (PBIX + Tkinter) |
-| `data/ruta_optima.db` | Base SQLite (≥5 filas por tabla al iniciar) |
-| `powerbi/` | CSV, `RutaOptima.pbix`, `README_PBI.txt`, `CADENA_BASE_DATOS.txt` |
-| `INSTRUCCIONES_LOCAL.md` | **Guía detallada** ejecución y dashboard Power BI |
-
----
-
-## Reto aplicado
-
-**Ruta Óptima**: peso (kg) + zona destino → clasificación (**Documento** / **Paquetería** / **Carga**) y cotización COP (`Backend/logica_reto.py`), persistida en `fact_envio`.
-
----
-
-## Dos dashboards en este proyecto
-
-| Dónde | Qué ves | Cómo abrirlo |
-|-------|---------|--------------|
-| **Tkinter** (app Python) | 4 KPI + 4 gráficas Canvas; se actualiza al CRUD | `./run_gui.sh` o `main.py` |
-| **Power BI Desktop** | Informe `.pbix` (modelo estrella + visuales de negocio) | Botón **5** en la app o abrir `powerbi/RutaOptima.pbix` |
-
-El modelo y medidas DAX base se generan solos; las **4 gráficas del informe** en Desktop se crean una vez siguiendo la tabla en [INSTRUCCIONES_LOCAL.md § 4.4](INSTRUCCIONES_LOCAL.md#44-crear-la-página-del-dashboard-4-gráficas).
-
----
-
-## Ejecución por sistema operativo
-
-### macOS (recomendado)
-
-```bash
-./run_gui.sh
+```
+          dim_destino          dim_tipo_paquete       dim_camion
+         ┌───────────┐        ┌─────────────────┐    ┌───────────┐
+         │ id_destino│        │ id_tipo          │    │ id_camion │
+         │ ciudad    │        │ clasificacion    │    │ placa     │
+         │ zona      │        │ peso_min_kg      │    │ capacidad │
+         │ distancia │        │ peso_max_kg      │    │ conductor │
+         └─────┬─────┘        │ tarifa_base      │    └─────┬─────┘
+               │              └────────┬─────────┘          │
+               └──────────────────┐    │    ┌───────────────┘
+                                  ▼    ▼    ▼
+                              ┌─────────────────┐
+                              │   fact_envio     │  ← TABLA DE HECHOS
+                              │ id_envio (PK)    │
+                              │ fecha_envio      │
+                              │ remitente        │
+                              │ peso_kg          │
+                              │ costo_envio      │
+                              │ id_destino (FK)  │
+                              │ id_tipo    (FK)  │
+                              │ id_camion  (FK)  │
+                              └─────────────────┘
 ```
 
-Si falla solo con `python3`, usa el Python del sistema:
+---
+
+## ⚙️ Requisitos Previos
+
+- Python **3.10+**
+- Tkinter (incluido con Python en Windows/macOS; en Ubuntu: `sudo apt install python3-tk`)
+- Power BI Desktop (para abrir el `.pbix`)
+- No se requieren librerías externas — solo la biblioteca estándar de Python.
+
+---
+
+## 🚀 Instrucciones de Ejecución
+
+### 1. Clonar el repositorio
 
 ```bash
-PYTHONPATH=. /usr/bin/python3 main.py
+git clone https://github.com/<TU_USUARIO>/RutaOptima.git
+cd RutaOptima
 ```
 
-(Genera el `.pbix` antes con el venv activado; ver `INSTRUCCIONES_LOCAL.md`.)
+### 2. Ejecutar la aplicación
 
-### Windows
-
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-$env:PYTHONPATH="."
+```bash
 python main.py
 ```
 
-Luego abre `powerbi\RutaOptima.pbix` en Power BI Desktop.
+Esto:
+1. Crea automáticamente la base de datos `Backend/ruta_optima.db` (si no existe).
+2. Inserta los datos semilla (mínimo 5 registros por tabla).
+3. Abre la ventana principal de la interfaz gráfica.
+
+### 3. Abrir el tablero de Power BI
+
+Desde la interfaz, haga clic en el botón **"📊 ABRIR POWER BI"**. También puede abrir `RutaOptima_Dashboard.pbix` directamente con Power BI Desktop.
+
+> **Nota sobre la conexión en Power BI:** Abra el archivo `.pbix`, vaya a *Transformar datos → Configuración del origen de datos* y actualice la ruta al archivo `Backend/ruta_optima.db` con la ruta absoluta en su equipo.
 
 ---
 
-## Botones de la ventana Tkinter
+## 🖥️ Funcionalidades de la Interfaz
 
-1. **Registrar** (Create)  
-2. **Ver manifiesto** (Read)  
-3. **Actualizar** (Update)  
-4. **Eliminar** (Delete)  
-5. **Abrir Power BI** → `RutaOptima.pbix`  
-- **Actualizar artefactos BI** → regenera CSV + `.pbix`
-
-Errores: `messagebox` + `try/except` (la app no debe cerrarse por validaciones de negocio).
-
----
-
-## Power BI (referencia técnica)
-
-- Guía de visuales y DAX: `powerbi/README_PBI.txt`  
-- Ruta SQLite: `powerbi/CADENA_BASE_DATOS.txt` (se actualiza al arrancar)  
-- CSV para refresco: `powerbi/csv_refresh/`
+| Botón | Función |
+|---|---|
+| ➕ **REGISTRAR** | Crea un nuevo envío con clasificación y costo automáticos |
+| 📋 **VER TABLA** | Recarga el manifiesto desde la base de datos |
+| ✏️ **ACTUALIZAR** | Modifica el envío seleccionado en la tabla |
+| 🗑️ **ELIMINAR** | Elimina el envío seleccionado (con confirmación) |
+| 📊 **ABRIR POWER BI** | Lanza el archivo `.pbix` en Power BI Desktop |
+| 📄 **MANIFIESTO** | Muestra el manifiesto completo ordenado por peso |
 
 ---
 
-## Dependencias
+## 📊 Power BI — Tablero de Inteligencia de Negocios
 
-```bash
-pip install -r requirements.txt
+El archivo `.pbix` incluye:
+
+### Modelo Estrella
+- Relaciones activas entre `fact_envio` y las tres dimensiones.
+- Tabla Calendario conectada para análisis temporal.
+
+### Gráficas (mínimo 4)
+1. **Envíos por Tipo de Paquete** — Gráfico de torta
+2. **Ingresos por Destino** — Gráfico de barras
+3. **Evolución Mensual de Envíos** — Gráfico de línea (serie temporal)
+4. **Top Remitentes por Costo Total** — Gráfico de barras horizontal
+
+### Medidas DAX
+```dax
+// MEDIDA DAX: Total Ingresos
+Total Ingresos = SUM(fact_envio[costo_envio])
+
+// MEDIDA DAX: Promedio Costo por Envío
+Promedio Costo = DIVIDE(SUM(fact_envio[costo_envio]), COUNTROWS(fact_envio))
+
+// MEDIDA DAX: Crecimiento MoM
+Crecimiento MoM =
+DIVIDE(
+    [Total Ingresos] - CALCULATE([Total Ingresos], PREVIOUSMONTH(Calendario[Fecha])),
+    CALCULATE([Total Ingresos], PREVIOUSMONTH(Calendario[Fecha]))
+)
 ```
 
-- **Pillow** — logo `Frontend/logo_marca.png`  
-- **pbix-mcp** — genera `powerbi/RutaOptima.pbix` automáticamente  
-- **Tkinter** y **sqlite3** — biblioteca estándar de Python  
+### Columna Calculada DAX
+```dax
+// COLUMNA CALCULADA: Franja de costo
+Franja Costo =
+IF(fact_envio[costo_envio] < 20000, "Económico",
+   IF(fact_envio[costo_envio] < 60000, "Estándar", "Premium"))
+```
 
 ---
 
-## Entrega GitHub individual
+## 📐 Reglas de Clasificación de Paquetes
 
-Publica este proyecto en tu repositorio **personal público** (enlace a repo de un compañero = penalización según rúbrica).
+| Clasificación | Rango de Peso |
+|---|---|
+| Documento | < 0.5 kg |
+| Paquetería | 0.5 kg – 5.0 kg |
+| Carga | 5.0 kg – 30.0 kg |
+| Carga Pesada | 30.0 kg – 100.0 kg |
+| Sobredimensionado | > 100.0 kg |
+
+**Fórmula de costo:**
+```
+Costo = Tarifa Base + (Distancia km × $50 × Peso kg)
+```
+
+---
+
+## 👥 Integrantes del Grupo
+
+- [Nombre Integrante 1]
+- [Nombre Integrante 2]
+- [Nombre Integrante 3]
+
+---
+
+## 📚 Tecnologías Utilizadas
+
+| Capa | Tecnología |
+|---|---|
+| Backend | Python 3.10+, SQLite3, POO |
+| Frontend | Tkinter (GUI) |
+| Base de Datos | SQLite (Esquema Estrella) |
+| BI | Microsoft Power BI Desktop |
+| Control de Versiones | Git / GitHub |

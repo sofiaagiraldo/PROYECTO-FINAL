@@ -1,1 +1,1 @@
-"""Paquete de interfaz gráfica Tkinter."""
+# Frontend package
