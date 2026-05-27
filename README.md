@@ -4,7 +4,7 @@ Ecosistema end-to-end (Python + SQLite modelo estrella + Tkinter + Power BI) seg
 
 ---
 
-## Guía rápida (empieza aquí)
+## Guía rápida
 
 **Instrucciones completas paso a paso (local + Power BI):**  
 👉 **[INSTRUCCIONES_LOCAL.md](INSTRUCCIONES_LOCAL.md)**
