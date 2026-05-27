@@ -13,6 +13,7 @@ from tkinter import messagebox, simpledialog, ttk
 from Backend.bootstrap import sincronizar_artefactos_bi
 from Backend.config import ruta_pbix_esperado
 from Backend.entidades import RegistroEnvio
+from Frontend.panel_dashboard import PanelDashboard
 
 # Paleta alineada con marca (azul corporativo + naranja acento).
 COLOR_NAVY = "#1B2D4A"
@@ -277,8 +278,8 @@ def _sync_bi(gestor) -> None:
 def lanzar_gui(repo_root: Path, gestor, repo) -> None:
     root = tk.Tk()
     root.title("Ruta Optima - Logistica Bogota - SQLite / Tkinter / Power BI")
-    root.geometry("960x760")
-    root.minsize(880, 700)
+    root.geometry("1020x920")
+    root.minsize(980, 820)
 
     estilo = ttk.Style(root)
     _estilo_dashboard(root, estilo)
@@ -332,9 +333,16 @@ def lanzar_gui(repo_root: Path, gestor, repo) -> None:
         "Cada alta, edicion o borrado en fact_envio vuelca archivos CSV en "
         "powerbi/csv_refresh/. Usa despues Actualizar datos en Desktop."
     )
-    ttk.Label(contenido, text=subt, wraplength=840, justify="left", style="Muted.TLabel").pack(
-        anchor="w", pady=(4, 16)
+    ttk.Label(contenido, text=subt, wraplength=900, justify="left", style="Muted.TLabel").pack(
+        anchor="w", pady=(4, 12)
     )
+
+    panel_dashboard = PanelDashboard(contenido, gestor)
+    panel_dashboard.pack(fill="both", expand=True, pady=(0, 14))
+    panel_dashboard.refrescar()
+
+    def _refrescar_vista() -> None:
+        panel_dashboard.refrescar()
 
     tarjeta = ttk.LabelFrame(contenido, text=" Mantenimiento de envios CRUD DB ", padding=16, style="Card.TLabelframe")
     tarjeta.pack(fill="x", anchor="nw")
@@ -349,6 +357,7 @@ def lanzar_gui(repo_root: Path, gestor, repo) -> None:
                 return
             nuevo = repo.crear_envio(reg)
             _sync_bi(gestor)
+            _refrescar_vista()
             messagebox.showinfo("Create", "Guardado OK. envio_id=%s" % nuevo)
         except Exception as exc:
             messagebox.showerror("Registrar", str(exc))
@@ -420,6 +429,7 @@ def lanzar_gui(repo_root: Path, gestor, repo) -> None:
                 return
             repo.actualizar_envio(reg)
             _sync_bi(gestor)
+            _refrescar_vista()
             messagebox.showinfo("Update", "Actualizado envio_id=%s" % eid)
         except Exception as exc:
             messagebox.showerror("Update", str(exc))
@@ -437,6 +447,7 @@ def lanzar_gui(repo_root: Path, gestor, repo) -> None:
                 return
             repo.borrar_envio(eid)
             _sync_bi(gestor)
+            _refrescar_vista()
             messagebox.showinfo("Delete", "Fila borrada desde fact_envio.")
         except Exception as exc:
             messagebox.showerror("Delete", str(exc))
@@ -447,9 +458,11 @@ def lanzar_gui(repo_root: Path, gestor, repo) -> None:
             if not pb.exists():
                 messagebox.showwarning(
                     "Power BI",
-                    "Archivo esperado ausente:\n%s\n\n"
-                    "Cree el archivo en Desktop y guardelo con ese nombre. "
-                    "Ver powerbi/README_PBI.txt." % pb,
+                    "Archivo ausente:\n%s\n\n"
+                    "1) En terminal: pip install -r requirements.txt\n"
+                    "2) Ejecute: ./run_gui.sh\n"
+                    "3) Abra el .pbix en Power BI Desktop\n\n"
+                    "Guia paso a paso: INSTRUCCIONES_LOCAL.md (seccion 4)." % pb,
                     parent=root,
                 )
                 return
@@ -460,7 +473,10 @@ def lanzar_gui(repo_root: Path, gestor, repo) -> None:
     def refrescar_bi():
         try:
             _sync_bi(gestor)
-            messagebox.showinfo("BI", "CSV y CADENA_BASE_DATOS.txt regenerados.")
+            _refrescar_vista()
+            pb = ruta_pbix_esperado()
+            extra = "\nRutaOptima.pbix actualizado." if pb.exists() else ""
+            messagebox.showinfo("BI", "CSV, CADENA_BASE_DATOS.txt y modelo PBIX regenerados." + extra)
         except Exception as exc:
             messagebox.showerror("BI", str(exc))
 

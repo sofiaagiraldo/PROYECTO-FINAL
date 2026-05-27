@@ -11,6 +11,7 @@ from Backend.config import (
     ruta_base_datos,
 )
 from Backend.export_bi import escribir_instrucciones_conexion_bd, exportar_star_schema_para_power_bi
+from Backend.generar_pbix import asegurar_archivo_pbix
 from Backend.logica_reto import ServicioEnvios
 from Backend.repositorio_envios import RepositorioManifiesto
 
@@ -51,3 +52,4 @@ def preparar_ecosistema_star_y_bi(carpeta_frontend: Path) -> tuple[GestorBaseDat
 def sincronizar_artefactos_bi(gestor: GestorBaseDatosLogistica) -> None:
     exportar_star_schema_para_power_bi(carpeta_export_csv_bi(), gestor.ruta)
     escribir_instrucciones_conexion_bd(archivo_instrucciones_conexion_bd(), gestor.ruta)
+    asegurar_archivo_pbix(gestor.ruta)

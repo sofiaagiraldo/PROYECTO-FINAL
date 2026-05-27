@@ -1,8 +1,34 @@
-Este archivo existe porque `.pbix` es binario: debes crearlo en Power BI Desktop.
+ARCHIVO: RutaOptima.pbix
+========================
 
-Pasos rapidos:
-1) Ejecuta `python main.py` desde la raiz del repo (crea BD y CSV).
-2) Desktop: Obtener datos desde SQLite usando la ruta en `CADENA_BASE_DATOS.txt`,
-   o importar desde `csv_refresh/` (texto CSV).
-3) Define relaciones de estrella, 4 graficas minimas, 1 medida DAX y 1 columna calculada (ver README_PBI.txt).
-4) Guarda aqui como: `RutaOptima.pbix` (nombre exacto, para que el boton 5 del Tkinter lo abra).
+Este informe se genera AUTOMÁTICAMENTE si instalaste las dependencias del proyecto.
+
+PASOS (primera vez en tu PC)
+----------------------------
+
+1. Abrir terminal en la carpeta del proyecto (donde está main.py).
+
+2. Instalar:
+     python3 -m venv .venv
+     source .venv/bin/activate
+     pip install -r requirements.txt
+
+3. Generar datos + .pbix + ventana Tkinter:
+     chmod +x run_gui.sh
+     ./run_gui.sh
+
+4. Comprobar que existe:
+     powerbi/RutaOptima.pbix
+
+5. Ver dashboard Power BI:
+   - Instalar Power BI Desktop: https://powerbi.microsoft.com/desktop/
+   - Abrir RutaOptima.pbix (doble clic o botón 5 en Tkinter)
+   - Seguir la sección 4 de INSTRUCCIONES_LOCAL.md para las 4 gráficas
+
+Si el .pbix NO aparece
+----------------------
+  source .venv/bin/activate
+  pip install pbix-mcp
+  python -c "from Backend.generar_pbix import asegurar_archivo_pbix; from Backend.config import ruta_base_datos; print(asegurar_archivo_pbix(ruta_base_datos()))"
+
+Guía completa: ../INSTRUCCIONES_LOCAL.md

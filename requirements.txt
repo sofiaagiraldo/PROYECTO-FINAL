@@ -1,4 +1,6 @@
 # Python 3.10+ — Tkinter y sqlite3 en la libreria estandar.
 # Pillow: redimension del logo PNG (logo_marca.png) sin pixelado.
 pillow>=10,<12
+# pbix-mcp: genera automaticamente powerbi/RutaOptima.pbix al arrancar (requiere venv).
+pbix-mcp>=0.5
 
